@@ -7,25 +7,11 @@ text-align:center;
 
 }
 
-h1{
-
-font-size:50px;
-
-}
-
-#menu{
-
-margin-top:80px;
-
-}
-
 canvas{
 
 border:3px solid white;
 background:#111;
-margin-top:20px;
-
-image-rendering: pixelated;
+image-rendering:pixelated;
 
 }
 
