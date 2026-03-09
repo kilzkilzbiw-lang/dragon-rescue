@@ -2,9 +2,12 @@
 <html>
 
 <head>
+
 <meta charset="UTF-8">
 <title>Dragon Rescue</title>
+
 <link rel="stylesheet" href="style.css">
+
 </head>
 
 <body>
@@ -13,33 +16,37 @@
 
 <h1>DRAGON RESCUE</h1>
 
-<div class="menuBox">
-
-<button onclick="startGame()">Mulai Game</button>
-
-<label>Mode:</label>
-
 <select id="mode">
+
 <option value="easy">Easy</option>
 <option value="normal">Normal</option>
 <option value="hard">Ultra Hard</option>
+
 </select>
 
-</div>
+<button onclick="startGame()">START GAME</button>
 
 </div>
 
 <div id="hud">
 
-<span id="levelText">Level 1</span>
+HP: <span id="hp">5</span>
+Level: <span id="level">1</span>
 
 </div>
 
 <canvas id="gameCanvas" width="900" height="450"></canvas>
 
+<div id="controls">
+
+<button onclick="moveLeft()">◀</button>
+<button onclick="shootFire()">🔥</button>
+<button onclick="moveRight()">▶</button>
+
+</div>
+
 <script src="levels.js"></script>
-<script src="audio.js"></script>
-<script src="main.js"></script>
+<script src="game.js"></script>
 
 </body>
 </html>
