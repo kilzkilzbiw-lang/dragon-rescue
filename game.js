@@ -1,18 +1,10 @@
-const canvas = document.getElementById("gameCanvas")
-const ctx = canvas.getContext("2d")
+const canvas=document.getElementById("game")
+const ctx=canvas.getContext("2d")
 
-let level = 0
-let playerHP = 5
+let level=0
+let hp=5
 
-let dragon = {
-
-x:100,
-y:350,
-w:40,
-h:40,
-speed:6
-
-}
+let dragon={x:100,y:350,speed:6}
 
 let goblins=[]
 let fires=[]
@@ -24,7 +16,7 @@ document.getElementById("menu").style.display="none"
 
 loadLevel()
 
-gameLoop()
+loop()
 
 }
 
@@ -33,9 +25,9 @@ function loadLevel(){
 goblins=[]
 fires=[]
 
-document.getElementById("level").innerText=level+1
+document.getElementById("lvl").innerText=level+1
 
-let count = levels[level].goblins
+let count=levels[level].goblins
 
 for(let i=0;i<count;i++){
 
@@ -43,10 +35,8 @@ goblins.push({
 
 x:500+Math.random()*300,
 y:350,
-w:30,
-h:30,
-speed:1+Math.random()*1.5,
-alive:true
+alive:true,
+cooldown:0
 
 })
 
@@ -54,106 +44,58 @@ alive:true
 
 if(levels[level].boss){
 
-queen={
-
-x:850,
-y:350,
-w:30,
-h:30
+queen={x:850,y:350}
 
 }
 
 }
 
-}
+function left(){dragon.x-=dragon.speed}
+function right(){dragon.x+=dragon.speed}
 
-function moveLeft(){
-
-dragon.x -= dragon.speed
-
-}
-
-function moveRight(){
-
-dragon.x += dragon.speed
-
-}
-
-document.addEventListener("keydown",e=>{
-
-if(e.key==="ArrowLeft") moveLeft()
-
-if(e.key==="ArrowRight") moveRight()
-
-if(e.key==="f") shootFire()
-
-})
-
-function shootFire(){
+function shoot(){
 
 fires.push({
 
 x:dragon.x+40,
-y:dragon.y+15,
+y:dragon.y+10,
 speed:8
 
 })
 
 }
 
-function drawDragon(){
+function update(){
 
-ctx.fillStyle="red"
-
-ctx.fillRect(
-
-dragon.x,
-dragon.y,
-dragon.w,
-dragon.h
-
-)
-
-}
-
-function drawGoblins(){
-
-ctx.fillStyle="green"
+fires.forEach(f=>f.x+=f.speed)
 
 goblins.forEach(g=>{
 
-if(!g.alive) return
+if(!g.alive)return
 
-ctx.fillRect(g.x,g.y,g.w,g.h)
-
-if(g.x > dragon.x){
-
-g.x -= g.speed
-
-}else{
-
-g.x += g.speed
-
-}
+if(g.x>dragon.x) g.x-=1.5
+else g.x+=1.5
 
 if(
 
-dragon.x < g.x+g.w &&
-dragon.x+dragon.w > g.x &&
-dragon.y < g.y+g.h &&
-dragon.y+dragon.h > g.y
+dragon.x<g.x+30 &&
+dragon.x+40>g.x &&
+dragon.y<g.y+30 &&
+dragon.y+30>g.y
 
 ){
 
-playerHP--
+if(g.cooldown<=0){
 
-document.getElementById("hp").innerText=playerHP
+hp--
 
-g.alive=false
+document.getElementById("hp").innerText=hp
 
-if(playerHP<=0){
+g.cooldown=60
 
-alert("Game Over")
+if(hp<=0){
+
+alert("GAME OVER")
 
 location.reload()
 
@@ -161,38 +103,24 @@ location.reload()
 
 }
 
-})
-
 }
 
-function drawFire(){
-
-ctx.fillStyle="orange"
-
-fires.forEach(f=>{
-
-ctx.fillRect(f.x,f.y,20,10)
+g.cooldown--
 
 })
 
-}
-
-function updateFire(){
-
 fires.forEach(f=>{
-
-f.x += f.speed
 
 goblins.forEach(g=>{
 
-if(!g.alive) return
+if(!g.alive)return
 
 if(
 
-f.x < g.x+g.w &&
-f.x+20 > g.x &&
-f.y < g.y+g.h &&
-f.y+10 > g.y
+f.x<g.x+30 &&
+f.x+20>g.x &&
+f.y<g.y+30 &&
+f.y+10>g.y
 
 ){
 
@@ -206,26 +134,37 @@ g.alive=false
 
 }
 
-function drawQueen(){
+function draw(){
 
-if(!queen) return
+ctx.clearRect(0,0,900,450)
 
-ctx.fillStyle="pink"
+drawDragon(ctx,dragon.x,dragon.y)
 
-ctx.fillRect(
+goblins.forEach(g=>{
 
-queen.x,
-queen.y,
-queen.w,
-queen.h
+if(g.alive) drawGoblin(ctx,g.x,g.y)
 
-)
+})
+
+fires.forEach(f=>{
+
+ctx.fillStyle="orange"
+
+ctx.fillRect(f.x,f.y,20,10)
+
+})
+
+if(queen){
+
+drawQueen(ctx,queen.x,queen.y)
+
+}
 
 }
 
 function checkLevel(){
 
-let alive = goblins.filter(g=>g.alive)
+let alive=goblins.filter(g=>g.alive)
 
 if(alive.length===0){
 
@@ -238,7 +177,6 @@ location.reload()
 }else{
 
 level++
-
 loadLevel()
 
 }
@@ -247,22 +185,12 @@ loadLevel()
 
 }
 
-function gameLoop(){
+function loop(){
 
-ctx.clearRect(0,0,canvas.width,canvas.height)
-
-drawDragon()
-
-drawGoblins()
-
-drawFire()
-
-drawQueen()
-
-updateFire()
-
+update()
+draw()
 checkLevel()
 
-requestAnimationFrame(gameLoop)
+requestAnimationFrame(loop)
 
 }
