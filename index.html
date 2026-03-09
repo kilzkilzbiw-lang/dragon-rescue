@@ -31,21 +31,22 @@
 <div id="hud">
 
 HP: <span id="hp">5</span>
-Level: <span id="level">1</span>
+LEVEL: <span id="lvl">1</span>
 
 </div>
 
-<canvas id="gameCanvas" width="900" height="450"></canvas>
+<canvas id="game" width="900" height="450"></canvas>
 
 <div id="controls">
 
-<button onclick="moveLeft()">◀</button>
-<button onclick="shootFire()">🔥</button>
-<button onclick="moveRight()">▶</button>
+<button onclick="left()">◀</button>
+<button onclick="shoot()">🔥</button>
+<button onclick="right()">▶</button>
 
 </div>
 
 <script src="levels.js"></script>
+<script src="sprites.js"></script>
 <script src="game.js"></script>
 
 </body>
