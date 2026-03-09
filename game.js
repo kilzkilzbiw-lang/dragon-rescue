@@ -2,14 +2,16 @@ const canvas = document.getElementById("gameCanvas")
 const ctx = canvas.getContext("2d")
 
 let level = 0
-let mode = "easy"
+let playerHP = 5
 
 let dragon = {
+
 x:100,
 y:350,
 w:40,
 h:40,
 speed:6
+
 }
 
 let goblins=[]
@@ -18,11 +20,7 @@ let queen=null
 
 function startGame(){
 
-mode=document.getElementById("mode").value
-
 document.getElementById("menu").style.display="none"
-
-bgm.play()
 
 loadLevel()
 
@@ -35,20 +33,20 @@ function loadLevel(){
 goblins=[]
 fires=[]
 
-document.getElementById("levelText").innerText="Level "+(level+1)
+document.getElementById("level").innerText=level+1
 
-let goblinCount = levels[level].goblins
+let count = levels[level].goblins
 
-for(let i=0;i<goblinCount;i++){
+for(let i=0;i<count;i++){
 
 goblins.push({
 
-x:400+Math.random()*400,
+x:500+Math.random()*300,
 y:350,
 w:30,
 h:30,
-alive:true,
-speed:1+Math.random()*2
+speed:1+Math.random()*1.5,
+alive:true
 
 })
 
@@ -57,20 +55,35 @@ speed:1+Math.random()*2
 if(levels[level].boss){
 
 queen={
-x:820,
-y:340,
-w:40,
-h:40
+
+x:850,
+y:350,
+w:30,
+h:30
+
 }
 
 }
+
+}
+
+function moveLeft(){
+
+dragon.x -= dragon.speed
+
+}
+
+function moveRight(){
+
+dragon.x += dragon.speed
 
 }
 
 document.addEventListener("keydown",e=>{
 
-if(e.key==="ArrowRight") dragon.x+=dragon.speed
-if(e.key==="ArrowLeft") dragon.x-=dragon.speed
+if(e.key==="ArrowLeft") moveLeft()
+
+if(e.key==="ArrowRight") moveRight()
 
 if(e.key==="f") shootFire()
 
@@ -81,20 +94,25 @@ function shootFire(){
 fires.push({
 
 x:dragon.x+40,
-y:dragon.y+10,
+y:dragon.y+15,
 speed:8
 
 })
-
-fireSound.currentTime=0
-fireSound.play()
 
 }
 
 function drawDragon(){
 
 ctx.fillStyle="red"
-ctx.fillRect(dragon.x,dragon.y,dragon.w,dragon.h)
+
+ctx.fillRect(
+
+dragon.x,
+dragon.y,
+dragon.w,
+dragon.h
+
+)
 
 }
 
@@ -108,7 +126,40 @@ if(!g.alive) return
 
 ctx.fillRect(g.x,g.y,g.w,g.h)
 
+if(g.x > dragon.x){
+
 g.x -= g.speed
+
+}else{
+
+g.x += g.speed
+
+}
+
+if(
+
+dragon.x < g.x+g.w &&
+dragon.x+dragon.w > g.x &&
+dragon.y < g.y+g.h &&
+dragon.y+dragon.h > g.y
+
+){
+
+playerHP--
+
+document.getElementById("hp").innerText=playerHP
+
+g.alive=false
+
+if(playerHP<=0){
+
+alert("Game Over")
+
+location.reload()
+
+}
+
+}
 
 })
 
@@ -130,22 +181,22 @@ function updateFire(){
 
 fires.forEach(f=>{
 
-f.x+=f.speed
+f.x += f.speed
 
 goblins.forEach(g=>{
 
 if(!g.alive) return
 
 if(
+
 f.x < g.x+g.w &&
 f.x+20 > g.x &&
 f.y < g.y+g.h &&
 f.y+10 > g.y
+
 ){
 
 g.alive=false
-
-hitSound.play()
 
 }
 
@@ -160,7 +211,15 @@ function drawQueen(){
 if(!queen) return
 
 ctx.fillStyle="pink"
-ctx.fillRect(queen.x,queen.y,queen.w,queen.h)
+
+ctx.fillRect(
+
+queen.x,
+queen.y,
+queen.w,
+queen.h
+
+)
 
 }
 
@@ -172,11 +231,14 @@ if(alive.length===0){
 
 if(level===19){
 
-winGame()
+alert("Ratu berhasil diselamatkan!")
+
+location.reload()
 
 }else{
 
 level++
+
 loadLevel()
 
 }
@@ -185,25 +247,16 @@ loadLevel()
 
 }
 
-function winGame(){
-
-bgm.pause()
-
-winSound.play()
-
-alert("Ratu berhasil diselamatkan!")
-
-location.reload()
-
-}
-
 function gameLoop(){
 
 ctx.clearRect(0,0,canvas.width,canvas.height)
 
 drawDragon()
+
 drawGoblins()
+
 drawFire()
+
 drawQueen()
 
 updateFire()
@@ -212,4 +265,4 @@ checkLevel()
 
 requestAnimationFrame(gameLoop)
 
-  }
+}
