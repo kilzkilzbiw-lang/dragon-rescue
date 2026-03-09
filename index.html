@@ -1,52 +1,59 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-
 <meta charset="UTF-8">
 <title>Dragon Rescue</title>
-
 <link rel="stylesheet" href="style.css">
-
 </head>
 
 <body>
 
-<div id="menu">
+<div id="menu" class="screen">
+<h1>🐉 DRAGON RESCUE</h1>
 
-<h1>DRAGON RESCUE</h1>
-
-<select id="mode">
-
-<option value="easy">Easy</option>
-<option value="normal">Normal</option>
-<option value="hard">Ultra Hard</option>
-
-</select>
-
-<button onclick="startGame()">START GAME</button>
+<button onclick="startGame('easy')">START EASY</button>
+<button onclick="startGame('normal')">START NORMAL</button>
+<button onclick="startGame('hard')">START ULTRA HARD</button>
+<button onclick="openSettings()">SETTINGS</button>
 
 </div>
 
-<div id="hud">
 
-HP: <span id="hp">5</span>
-LEVEL: <span id="lvl">1</span>
+<div id="settings" class="screen hidden">
+
+<h2>SETTINGS</h2>
+
+<label>
+Music
+<input type="checkbox" id="musicToggle" checked>
+</label>
+
+<br><br>
+
+<button onclick="closeSettings()">BACK</button>
 
 </div>
 
-<canvas id="game" width="900" height="450"></canvas>
 
-<div id="controls">
+<div id="gameUI" class="hidden">
 
-<button onclick="left()">◀</button>
-<button onclick="shoot()">🔥</button>
-<button onclick="right()">▶</button>
+<span id="levelLabel">LEVEL 1</span>
+<span id="hpLabel">HP 5</span>
 
 </div>
 
-<script src="levels.js"></script>
-<script src="sprites.js"></script>
+
+<canvas id="gameCanvas" width="640" height="360"></canvas>
+
+
+<div id="winScreen" class="screen hidden">
+
+<h1>👑 QUEEN SAVED 👑</h1>
+
+<button onclick="location.reload()">PLAY AGAIN</button>
+
+</div>
+
 <script src="game.js"></script>
 
 </body>
